@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kro-rgds
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+  source:
+    path: clusters/kind/resourcegraphdefinitions
+    repoURL: https://github.com/koksay/gitopscon-kro-demo
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+    retry:
+      limit: 1
+      backoff:
+        duration: 5s 
+        factor: 2 
+        maxDuration: 1m

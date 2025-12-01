@@ -1,0 +1,10 @@
+apiVersion: kro.run/v1alpha1
+kind: Inference
+metadata:
+  name: demo-app
+  namespace: kro-demo
+spec:
+  name: demo-4022
+  project: gitopscon-na
+  region: europe-west1
+  model: meta-llama/Llama-3.2-1B-Instruct
