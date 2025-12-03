@@ -2,12 +2,13 @@
 
 ## Setup Kind Cluster (w/ KCC)
 
-We first create a Kind cluster and deploy KCC (k8s-config-connector) on the cluster to be able to manage resources on GCP:
+We first create a Kind cluster and deploy KCC (k8s-config-connector) on the cluster to be able to manage resources on GCP.
 
-> [!IMPORTANT]
-> `setup_kind_cluster.sh` script assumes that a file called `key.json` exists in the `setup` directory with the service account key json file
+> [!TIP]
+> KRO does not talk to the public cloud APIs, it only works with the Kubernetes objects.
+> Since we will create resources on GCP, we will use [Config Conenctor](https://docs.cloud.google.com/config-connector/docs/overview)
 >
-> Make sure the create a service account with required roles before starting the script.
+> AWS has [AWS Controllers for Kubernetes - ACK](https://github.com/aws-controllers-k8s/community) and Azure has [Azure Service Operator - ASO](https://azure.github.io/azure-service-operator/)
 
 ```bash
 # check what script runs:
@@ -23,6 +24,13 @@ export CREDENTIALS_SECRET_NAME=gcp-credentials
 # make sure all pods are running
 kubectl get pods -A
 ```
+
+> [!IMPORTANT]
+> `setup_kind_cluster.sh` script assumes that a file called `key.json` exists in the `setup` directory with the service account key json file
+>
+> Make sure the create a service account with required roles before starting the script.
+
+
 
 ## Deploy KRO
 
