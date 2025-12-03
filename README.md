@@ -1,4 +1,4 @@
-# KRO (Kubernetes Resource Operator) Demo with GCP
+# KRO (Kubernetes Resource Orchestrator) Demo with GCP
 
 ## Setup Kind Cluster (with KCC)
 
@@ -99,7 +99,7 @@ gcloud storage buckets list
 ```
 
 
-## Create 2nd Webapp
+### Create 2nd Webapp
 
 ```bash
 cat > clusters/kind/manifests/webapp-2.yaml <<EOF
