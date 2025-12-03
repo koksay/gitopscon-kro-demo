@@ -1,6 +1,6 @@
-# KRO (Kubernetes Resource Orchestrator) Demo with GCP
+# KRO (Kube Resource Orchestrator) Demo with GCP
 
-## Setup Kind Cluster (with KCC)
+## Setup Kind Cluster (w/ KCC)
 
 We first create a Kind cluster and deploy KCC (k8s-config-connector) on the cluster to be able to manage resources on GCP:
 
