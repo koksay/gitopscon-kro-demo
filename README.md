@@ -45,20 +45,20 @@ Check the ArgoCD Apps and manifests:
 
 ### ResourceGraphDefinition:
 
-This one will create our Inference RGD:
+This one will create our Webapp RGD:
 
 ```bash
-cat clusters/kind/resourcegraphdefinitions/rgd-inference.yaml
+cat clusters/kind/resourcegraphdefinitions/rgd-webapp.yaml
 ```
 
-### Inference Resource
+### Webapp Resource
 
-Create the inference app:
+Create the Webapp resource:
 
 ```bash
-cat > clusters/kind/manifests/inference.yaml <<EOF
+cat > clusters/kind/manifests/webapp.yaml <<EOF
 apiVersion: kro.run/v1alpha1
-kind: Inference
+kind: Webapp
 metadata:
   name: demo-app
   namespace: kro-demo
@@ -76,7 +76,7 @@ Commit changes and see ArgoCD deploys them:
 
 ```bash
 git add .
-git commit -sam "Add inference app"
+git commit -sam "Add webapp app"
 git push
 
 # Create app-of-apps to enable GitOps:
@@ -92,7 +92,7 @@ When all synced, check current resources on Kubernetes and GCP:
 kubectl api-resources --api-group=kro.run 
 
 kubectl get deploy,svc -n kro-demo
-kubectl get inference -n kro-demo
+kubectl get webapp -n kro-demo
 
 gcloud auth activate-service-account --key-file=./setup/key.json
 gcloud sql instances list

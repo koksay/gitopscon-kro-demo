@@ -1,0 +1,121 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: webapp.kro.run
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: Webapp
+    spec:
+      name: string
+      model: string
+      project: string
+      region: string
+    status:
+      connectionName: ${sqlinstance.status.connectionName}
+      ipAddress: ${sqlinstance.status.firstIpAddress}
+  resources:
+  - id: sqlinstance
+    template:
+      apiVersion: sql.cnrm.cloud.google.com/v1beta1
+      kind: SQLInstance
+      metadata:
+        ownerReferences:
+            - apiVersion: kro.run/v1alpha1
+              kind: \${schema.kind}
+              name: \${schema.metadata.name}
+              uid: \${schema.metadata.uid}
+              blockOwnerDeletion: true
+              controller: false
+        annotations:
+          argocd.argoproj.io/tracking-id: \${schema.metadata.?annotations["argocd.argoproj.io/tracking-id"]}
+        labels:
+          failure-zone: ${schema.spec.region}
+        name: ${schema.spec.name}
+      spec:
+        databaseVersion: POSTGRES_17
+        region: ${schema.spec.region}
+        settings:
+          availabilityType: REGIONAL
+          backupConfiguration:
+            backupRetentionSettings:
+              retainedBackups: 6
+            enabled: true
+            location: eu
+          diskSize: 10
+          diskType: PD_SSD
+          maintenanceWindow:
+            day: 7
+            hour: 3
+          tier: db-custom-2-8192
+  - id: bucket
+    template:
+      apiVersion: storage.cnrm.cloud.google.com/v1beta1
+      kind: StorageBucket
+      metadata:
+        name: ${schema.spec.name}-${schema.spec.project}
+        ownerReferences:
+            - apiVersion: kro.run/v1alpha1
+              kind: \${schema.kind}
+              name: \${schema.metadata.name}
+              uid: \${schema.metadata.uid}
+              blockOwnerDeletion: true
+              controller: false
+        annotations:
+          argocd.argoproj.io/tracking-id: \${schema.metadata.?annotations["argocd.argoproj.io/tracking-id"]}
+      spec:
+        uniformBucketLevelAccess: true
+        location: ${schema.spec.region}
+  - id: deployment
+    template:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: ${schema.spec.name}
+        ownerReferences:
+            - apiVersion: kro.run/v1alpha1
+              kind: \${schema.kind}
+              name: \${schema.metadata.name}
+              uid: \${schema.metadata.uid}
+              blockOwnerDeletion: true
+              controller: false
+        annotations:
+          argocd.argoproj.io/tracking-id: \${schema.metadata.?annotations["argocd.argoproj.io/tracking-id"]}
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: nginx
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: nginx
+          spec:
+            containers:
+            - name: nginx
+              image: nginx:alpine3.22
+              ports:
+                - containerPort: 80
+  - id: service
+    template:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: ${schema.spec.name}
+        ownerReferences:
+            - apiVersion: kro.run/v1alpha1
+              kind: \${schema.kind}
+              name: \${schema.metadata.name}
+              uid: \${schema.metadata.uid}
+              blockOwnerDeletion: true
+              controller: false
+        annotations:
+          argocd.argoproj.io/tracking-id: \${schema.metadata.?annotations["argocd.argoproj.io/tracking-id"]}
+      spec:
+        selector:
+          app.kubernetes.io/name: nginx
+        ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 80
+        type: ClusterIP
