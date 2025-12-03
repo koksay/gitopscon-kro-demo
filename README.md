@@ -82,14 +82,14 @@ git push
 # Create app-of-apps to enable GitOps:
 kubectl apply -f clusters/kind/app-of-apps.yaml
 
-kubectx argocd
+kubens argocd
 argocd admin dashboard
 ```
 
 When all synced, check current resources on Kubernetes and GCP:
 
 ```bash
-kubectl api-resources --api-group=kro.run 
+kubectl api-resources --api-group=kro.run
 
 kubectl get deploy,svc -n kro-demo
 kubectl get webapp -n kro-demo
