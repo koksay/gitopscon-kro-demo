@@ -91,10 +91,36 @@ When all synced, check current resources on Kubernetes and GCP:
 ```bash
 kubectl api-resources --api-group=kro.run
 
-kubectl get deploy,svc -n kro-demo
-kubectl get webapp -n kro-demo
+kubectl get deploy,svc,webapp -n kro-demo
 
 gcloud auth activate-service-account --key-file=./setup/key.json
+gcloud sql instances list
+gcloud storage buckets list
+```
+
+
+## Create 2nd Webapp
+
+```bash
+cat > clusters/kind/manifests/webapp-2.yaml <<EOF
+apiVersion: kro.run/v1alpha1
+kind: Webapp
+metadata:
+  name: demo-app-2
+  namespace: kro-demo
+spec:
+  name: demo-$(openssl rand -hex 2)
+  project: ${GCP_PROJECT_ID}
+  region: europe-west1
+  model: meta-llama/Llama-3.2-1B-Instruct
+EOF
+
+git add .
+git commit -sam "Add 2nd webapp"
+git push
+
+kubectl get deploy,svc,webapp -n kro-demo
+
 gcloud sql instances list
 gcloud storage buckets list
 ```
