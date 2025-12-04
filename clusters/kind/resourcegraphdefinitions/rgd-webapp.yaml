@@ -8,7 +8,6 @@ spec:
     kind: Webapp
     spec:
       name: string
-      model: string
       project: string
       region: string
     status:
@@ -96,6 +95,11 @@ spec:
               image: nginx:alpine3.22
               ports:
                 - containerPort: 80
+              env:
+                - name: DB_CONNECTION_NAME
+                  value: ${sqlinstance.status.connectionName}
+                - name: DB_IP_ADDRESS
+                  value: ${sqlinstance.status.firstIpAddress}
   - id: service
     template:
       apiVersion: v1

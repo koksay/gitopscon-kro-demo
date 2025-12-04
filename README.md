@@ -74,7 +74,6 @@ spec:
   name: demo-$(openssl rand -hex 2)
   project: ${GCP_PROJECT_ID}
   region: europe-west1
-  model: meta-llama/Llama-3.2-1B-Instruct
 EOF
 ```
 
@@ -104,8 +103,10 @@ kubectl get deploy,svc,webapp -n kro-demo
 gcloud auth activate-service-account --key-file=./setup/key.json
 gcloud sql instances list
 gcloud storage buckets list
-```
 
+kubectl get webapp demo-app -n kro-demo \
+  -o jsonpath='{.status.ipAddress}{"\n"}{.status.connectionName}'
+```
 
 ### Create 2nd Webapp
 
@@ -120,7 +121,6 @@ spec:
   name: demo-$(openssl rand -hex 2)
   project: ${GCP_PROJECT_ID}
   region: europe-west1
-  model: meta-llama/Llama-3.2-1B-Instruct
 EOF
 
 git add .
